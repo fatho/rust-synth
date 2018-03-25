@@ -1,0 +1,8 @@
+[package]
+name = "rust-synth"
+version = "0.1.0"
+authors = ["Fabian Thorand <f.thorand@gmail.com>"]
+
+[dependencies]
+byteorder = "1.2.1"
+
