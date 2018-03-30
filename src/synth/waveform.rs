@@ -18,6 +18,6 @@ impl Waveform for Sine {
 
 impl Waveform for Saw {
     fn phase_amplitude(&self, phase: f32) -> f32 {
-        1.0 - 2.0 * phase % 1.0
+        2.0 * (phase % 1.0) - 1.0
     }
 }
