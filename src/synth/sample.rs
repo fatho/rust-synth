@@ -29,9 +29,8 @@ impl Resample<i16> for f32 {
 }
 
 
-// This is a simple macro named `say_hello`.
+#[cfg(test)]
 macro_rules! test_resample_impl {
-    // `()` indicates that the macro takes no argument.
     ($from: ident, $to: ident) => ({
         assert_eq!(<$from as Sample>::lower_limit().resample(), <$to as Sample>::lower_limit());
         assert_eq!(<$from as Sample>::upper_limit().resample(), <$to as Sample>::upper_limit());
@@ -64,13 +63,7 @@ fn test_clamp() {
     assert!(clamp(std::f32::NAN, -1.0, 1.0).is_nan());
 }
 
-pub fn hard_limiter<S: Sample>(input: S) -> S {
+pub fn hard_limit<S: Sample>(input: S) -> S {
     clamp(input, S::lower_limit(), S::upper_limit())
-}
-
-pub fn resampler<From, To>(input: From) -> To where
-    From: Resample<To>
-{
-    input.resample()
 }
 
