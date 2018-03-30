@@ -10,6 +10,12 @@ pub struct Sine;
 #[derive(Debug, Clone)]
 pub struct Saw;
 
+#[derive(Debug, Clone)]
+pub struct Triangle;
+
+#[derive(Debug, Clone)]
+pub struct Wavetable<T>(pub T);
+
 impl Waveform for Sine {
     fn phase_amplitude(&self, phase: f32) -> f32 {
         (2.0 * std::f32::consts::PI * phase.fract()).sin()
@@ -19,5 +25,24 @@ impl Waveform for Sine {
 impl Waveform for Saw {
     fn phase_amplitude(&self, phase: f32) -> f32 {
         2.0 * (phase % 1.0) - 1.0
+    }
+}
+
+impl Waveform for Triangle {
+    fn phase_amplitude(&self, phase: f32) -> f32 {
+        1.0 - 4.0 * (phase - 0.5).abs()
+    }
+}
+
+impl<T> Waveform for Wavetable<T> where
+    T: std::ops::Deref<Target = [f32]>
+{
+    fn phase_amplitude(&self, phase: f32) -> f32 {
+        let length = self.0.len();
+        let index = phase * length as f32;
+        let index1 = index.floor() as usize % length;
+        let index2 = index.ceil() as usize % length;
+        let interp = index.fract();
+        (1.0 - interp) * self.0[index1] + interp * self.0[index2]
     }
 }
