@@ -14,6 +14,10 @@ pub struct Saw;
 pub struct Triangle;
 
 #[derive(Debug, Clone)]
+/// A rectangular wave with the given duty cycle.
+pub struct Rect(pub f32);
+
+#[derive(Debug, Clone)]
 pub struct Wavetable<T>(pub T);
 
 impl Waveform for Sine {
@@ -31,6 +35,18 @@ impl Waveform for Saw {
 impl Waveform for Triangle {
     fn phase_amplitude(&self, phase: f32) -> f32 {
         1.0 - 4.0 * (phase - 0.5).abs()
+    }
+}
+
+impl Waveform for Rect {
+    fn phase_amplitude(&self, phase: f32) -> f32 {
+        if phase < self.0 {
+            -1.0
+        } else if phase < self.0 * 2.0 {
+            1.0
+        } else {
+            0.0
+        }
     }
 }
 

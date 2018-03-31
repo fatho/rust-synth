@@ -1,7 +1,7 @@
 use std;
 
 use synth::signals::SignalGenerator;
-use synth::waveform::{Waveform, Saw, Sine, Triangle};
+use synth::waveform::{Waveform, Saw, Sine, Rect, Triangle};
 
 pub fn sine<F>(frequency: F) -> Oscillator<Sine, F> {
     Oscillator::new(frequency, Sine)
@@ -13,6 +13,14 @@ pub fn saw<F>(frequency: F) -> Oscillator<Saw, F> {
 
 pub fn triangle<F>(frequency: F) -> Oscillator<Triangle, F> {
     Oscillator::new(frequency, Triangle)
+}
+
+pub fn square<F>(frequency: F) -> Oscillator<Rect, F> {
+    Oscillator::new(frequency, Rect(0.5))
+}
+
+pub fn rect<F>(duty_cycle: f32, frequency: F) -> Oscillator<Rect, F> {
+    Oscillator::new(frequency, Rect(duty_cycle))
 }
 
 #[derive(Debug, Clone)]
