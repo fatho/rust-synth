@@ -1,4 +1,5 @@
 use std;
+use std::fmt::{Debug};
 
 #[derive(Debug, Clone)]
 pub struct Add<S1, S2>(pub S1, pub S2);
@@ -6,8 +7,18 @@ pub struct Add<S1, S2>(pub S1, pub S2);
 #[derive(Debug, Clone)]
 pub struct Mul<S1, S2>(pub S1, pub S2);
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Map<S, F>(pub S, pub F);
+
+impl<S: Debug, F> Debug for Map<S, F> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.debug_tuple("Map")
+            .field(&self.0)
+            .field(&"<function>")
+            .finish()
+    }
+}
+
 
 pub trait SignalGenerator {
     type Frame;

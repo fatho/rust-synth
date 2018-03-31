@@ -144,6 +144,8 @@ impl Pink {
     }
 }
 
+/// Defines a random number generator that remembers its initial seed. Used for
+/// reproducible noise generation even across multiple plays of the same song.
 mod rng {
     use rand;
     use rand::{SeedableRng, RngCore};
