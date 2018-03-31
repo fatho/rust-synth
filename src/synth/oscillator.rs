@@ -1,7 +1,19 @@
 use std;
 
 use synth::signals::SignalGenerator;
-use synth::waveform::Waveform;
+use synth::waveform::{Waveform, Saw, Sine, Triangle};
+
+pub fn sine<F>(frequency: F) -> Oscillator<Sine, F> {
+    Oscillator::new(frequency, Sine)
+}
+
+pub fn saw<F>(frequency: F) -> Oscillator<Saw, F> {
+    Oscillator::new(frequency, Saw)
+}
+
+pub fn triangle<F>(frequency: F) -> Oscillator<Triangle, F> {
+    Oscillator::new(frequency, Triangle)
+}
 
 #[derive(Debug, Clone)]
 pub struct Oscillator<Shape, Freq> {
