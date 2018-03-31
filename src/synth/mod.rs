@@ -3,3 +3,4 @@ pub mod oscillator;
 pub mod waveform;
 pub mod sample;
 pub mod noise;
+pub mod filters;
