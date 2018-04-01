@@ -22,15 +22,14 @@ fn main() {
     let ampl = saw(0.1).map(|x| (1. - x) * 1.0);
     let lfo_freq = saw(0.1).add(1.).map(|x| x.powi(2)).mul(2.);
     let lfo = sine(lfo_freq).map(|x| e2 * 2.0f32.powf((1. - x) * 3.0));
-    let mut gen = square(a1).mul(0.3)
-        .add(square(c2).mul(0.3))
-        .add(square(e2).mul(0.3))
+    let mut gen = triangle(a1).mul(0.3)
+        .add(triangle(c2).mul(0.3))
+        .add(triangle(e2).mul(0.3))
         .add(white_noise().mul(0.05))
         .filtered(LowPassRC::new(440.0)
                   .automated()
                   .with_generated_param(LowPassRC::cutoff_frequency(), lfo))
-        .filtered(Delay::new(0.007).dry(0.5, 0.5))
-        .filtered(Delay::new(0.3).dry(0.9, 0.1))
+        .filtered(Echo::new(0.5, 0.7))
         .mul(ampl)
     ;
 
