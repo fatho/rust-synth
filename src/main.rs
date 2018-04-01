@@ -18,7 +18,7 @@ fn main() {
     let c2: f32 = a1 * half_tone.powi(3);
     let e2: f32 = a1 * half_tone.powi(7);
 
-    // let ampl = saw(0.1).map(|x| (1. - x) * 1.0);
+    let ampl = saw(0.1).map(|x| (1. - x) * 1.0);
     // let lfo_freq = saw(0.1).add(1.).map(|x| x.powi(2)).mul(2.);
     // let lfo = sine(lfo_freq).map(|x| e2 * 2.0f32.powf((1. - x) * 3.0));
     let mut supersaw = rect(0.1, a1).mul(0.3)
@@ -26,7 +26,7 @@ fn main() {
         .add(saw(e2).mul(0.3))
         .add(white_noise().mul(0.05))
         // .low_pass_rc(lfo)
-        // .mul(ampl)
+        .mul(ampl)
     ;
 
     supersaw.set_sampling_parameters(&sampling_params);
