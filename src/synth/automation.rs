@@ -1,3 +1,5 @@
+use std;
+
 use synth::equipment::{Equipment, Parameter, SamplingParameters};
 use synth::signals::SignalGenerator;
 use synth::filters::Filter;
@@ -9,13 +11,31 @@ pub struct Automated<E, C> {
     controller: C
 }
 
+impl<E, C: Controller<E>> Automated<E,C> {
+    pub fn with_generated_param<P, G>(self, param: P, generator: G) -> Automated<E, ChainController<C, GeneratorController<P, G>>> where
+        P: Parameter<Target=E>,
+        G: SignalGenerator<Output=P::Value>
+    {
+        Automated {
+            equipment: self.equipment,
+            controller: self.controller.then(
+                GeneratorController {
+                    param: param,
+                    value_gen: generator
+                }
+            )
+        }
+    }
+
+}
+
 pub trait AutomationExt: Equipment {
-    fn automated<C>(self, controller: C) -> Automated<Self, C> where
+    fn automated(self) -> Automated<Self, NopController<Self>> where
         Self: Sized
     {
         Automated {
             equipment: self,
-            controller: controller
+            controller: NopController(std::marker::PhantomData)
         }
     }
 }
@@ -59,16 +79,6 @@ impl<E, C> SignalGenerator for Automated<E, C> where
     fn next(&mut self) -> Self::Output {
         self.controller.update(&mut self.equipment);
         self.equipment.next()
-    }
-}
-
-pub fn generate_param<P, G>(param: P, generator: G) -> GeneratorController<P, G> where
-    P: Parameter,
-    G: SignalGenerator<Output=P::Value>
-{
-    GeneratorController {
-        param: param,
-        value_gen: generator
     }
 }
 
@@ -142,4 +152,19 @@ impl<P, S> Controller<P::Target> for GeneratorController<P, S> where
     fn update(&mut self, target: &mut P::Target) {
         self.param.set(target, self.value_gen.next())
     }
+}
+
+
+#[derive(Debug, Clone)]
+pub struct NopController<E>(std::marker::PhantomData<E>);
+
+
+impl<E> Equipment for NopController<E> {
+    fn reset(&mut self) {}
+
+    fn set_sampling_parameters(&mut self, params: &SamplingParameters) {}
+}
+
+impl<E> Controller<E> for NopController<E> {
+    fn update(&mut self, target: &mut E) {}
 }

@@ -22,24 +22,25 @@ fn main() {
     let ampl = saw(0.1).map(|x| (1. - x) * 1.0);
     let lfo_freq = saw(0.1).add(1.).map(|x| x.powi(2)).mul(2.);
     let lfo = sine(lfo_freq).map(|x| e2 * 2.0f32.powf((1. - x) * 3.0));
-    let mut supersaw = rect(0.1, a1).mul(0.3)
-        .add(rect(0.1, c2).mul(0.3))
+    let mut gen = saw(a1).mul(0.3)
+        .add(saw(c2).mul(0.3))
         .add(saw(e2).mul(0.3))
         .add(white_noise().mul(0.05))
         .filtered(LowPassRC::new(440.0)
-                  .automated(generate_param(LowPassRC::cutoff_frequency(), lfo)))
+                  .automated()
+                  .with_generated_param(LowPassRC::cutoff_frequency(), lfo))
         .mul(ampl)
     ;
 
-    supersaw.set_sampling_parameters(&sampling_params);
-    eprintln!("{:?}", supersaw);
+    gen.set_sampling_parameters(&sampling_params);
+    eprintln!("{:?}", gen);
 
     let mut out = std::io::stdout();
 
-    SignalIterator(&mut supersaw)
+    SignalIterator(&mut gen)
         .map(sample::hard_limit)
         .map(sample::Resample::resample)
-        .take(sampling_params.sample_rate() as usize * 60)
+        .take(sampling_params.sample_rate() as usize * 10)
         .for_each(|value| out.write_i16::<LittleEndian>(value).unwrap());
 
 }
