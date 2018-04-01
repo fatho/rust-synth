@@ -1,3 +1,5 @@
+use std;
+
 /// Parameters that influence how sound is generated and communicated between
 /// different pieces of equipment.
 pub struct SamplingParameters {
@@ -45,6 +47,25 @@ pub trait Equipment {
     // fn load(...) -> Self;
 }
 
+/// A parameter of a piece of equipment can be changed through automation.
+pub trait Parameter {
+    type Target;
+    type Value;
+
+    fn set(&self, target: &mut Self::Target, value: Self::Value);
+}
+
+/// A parameter that refers to the equipment as a whole.
+pub struct SelfParameter<T>(std::marker::PhantomData<T>);
+
+impl<T> Parameter for SelfParameter<T> {
+    type Target = T;
+    type Value = T;
+
+    fn set(&self, target: &mut Self::Target, value: Self::Value) {
+        std::mem::replace(target, value);
+    }
+}
 
 /// Treating constant values as a piece of equipment can be useful.
 impl Equipment for f32 {

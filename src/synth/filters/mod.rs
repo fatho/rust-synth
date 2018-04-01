@@ -41,7 +41,8 @@ impl<S, F> SignalGenerator for Filtered<S, F> where
 
 pub trait FilterExt: SignalGenerator {
     fn filtered<F>(self, filter: F) -> Filtered<Self, F> where
-        Self: Sized
+        Self: Sized,
+        F: Filter
     {
         Filtered {
             generator: self,

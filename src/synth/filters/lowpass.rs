@@ -1,5 +1,5 @@
 use super::filter::Filter;
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::equipment::{Equipment, SamplingParameters, Parameter};
 use std;
 
 #[derive(Debug, Clone)]
@@ -9,6 +9,19 @@ pub struct LowPassRC {
     alpha: f32,
     last_output: f32,
 }
+
+#[derive(Debug, Clone)]
+pub struct CutoffFrequencyParam<Target>(std::marker::PhantomData<Target>);
+
+impl Parameter for CutoffFrequencyParam<LowPassRC> {
+    type Target = LowPassRC;
+    type Value = f32;
+
+    fn set(&self, target: &mut Self::Target, value: Self::Value) {
+        target.set_cutoff_frequency(value);
+    }
+}
+
 
 impl LowPassRC {
 
@@ -21,9 +34,18 @@ impl LowPassRC {
         }
     }
 
+    pub fn set_cutoff_frequency(&mut self, cutoff_frequency: f32) {
+        self.cutoff_frequency = cutoff_frequency;
+        self.recompute_coefficient();
+    }
+
     fn recompute_coefficient(&mut self) {
         let beta = 2.0 * std::f32::consts::PI * self.cutoff_frequency / self.sample_rate;
         self.alpha = beta / (beta + 1.0)
+    }
+
+    pub fn cutoff_frequency() -> CutoffFrequencyParam<LowPassRC> {
+        CutoffFrequencyParam(std::marker::PhantomData)
     }
 }
 
