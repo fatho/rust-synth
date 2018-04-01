@@ -21,6 +21,15 @@ pub struct Split<F>(pub F);
 #[derive(Clone)]
 pub struct Map<Fun, I>(pub Fun, PhantomData<I>);
 
+/// A "dried" version of a filter that mixes the wet (filtered) signal with the
+/// dry (input) signal.
+#[derive(Debug, Clone)]
+pub struct Dried<F> {
+    wet: f32,
+    dry: f32,
+    filter: F
+}
+
 impl<Fun, I> Debug for Map<Fun, I> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         f.debug_tuple("Map").finish()
@@ -49,6 +58,16 @@ pub trait Filter: Equipment {
         Self: Sized
     {
         Compose(self, next)
+    }
+
+    fn dry(self, dryness: f32, wetness: f32) -> Dried<Self> where
+        Self: Sized
+    {
+        Dried {
+            wet: wetness,
+            dry: dryness,
+            filter: self
+        }
     }
 }
 
@@ -134,6 +153,32 @@ impl<F, I, O> Filter for Map<F, I> where
 
     fn filter(&mut self, input: Self::Input) -> Self::Output {
         self.0(input)
+    }
+}
+
+impl<F> Equipment for Dried<F> where
+    F: Equipment
+{
+    fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
+        self.filter.set_sampling_parameters(params);
+    }
+
+    fn reset(&mut self) {
+        self.filter.reset();
+    }
+}
+
+impl<F> Filter for Dried<F> where
+    F: Filter,
+    F::Input: std::ops::Mul<f32> + Copy,
+    F::Output: std::ops::Mul<f32>,
+    <F::Input as std::ops::Mul<f32>>::Output: std::ops::Add<<F::Output as std::ops::Mul<f32>>::Output, Output=F::Output>
+{
+    type Input = F::Input;
+    type Output = F::Output;
+
+    fn filter(&mut self, input: Self::Input) -> Self::Output {
+         input * self.dry + self.filter.filter(input) * self.wet
     }
 }
 

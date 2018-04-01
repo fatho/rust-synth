@@ -28,7 +28,8 @@ fn main() {
         .add(white_noise().mul(0.05))
         .filtered(LowPassRC::new(440.0)
                   .automated()
-                  .with_generated_param(LowPassRC::cutoff_frequency(), lfo))
+                  .with_generated_param(LowPassRC::cutoff_frequency(), lfo)
+                  .dry(0.5, 0.5))
         .mul(ampl)
     ;
 

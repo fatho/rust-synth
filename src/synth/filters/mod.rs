@@ -7,6 +7,25 @@ pub use filter::*;
 pub mod lowpass;
 pub use lowpass::LowPassRC;
 
+pub trait FilteredExt: SignalGenerator {
+    fn filtered<F>(self, filter: F) -> Filtered<Self, F> where
+        Self: Sized,
+        F: Filter
+    {
+        Filtered {
+            generator: self,
+            filter: filter
+        }
+    }
+
+    fn map<F, O>(self, fun: F) -> Filtered<Self, Map<F, Self::Output>> where
+        F: Fn(Self::Output) -> O,
+        Self: Sized
+    {
+        self.filtered(lift(fun))
+    }
+}
+
 /// A filtered signal generator.
 #[derive(Debug, Clone)]
 pub struct Filtered<S, F> {
@@ -39,23 +58,4 @@ impl<S, F> SignalGenerator for Filtered<S, F> where
     }
 }
 
-pub trait FilterExt: SignalGenerator {
-    fn filtered<F>(self, filter: F) -> Filtered<Self, F> where
-        Self: Sized,
-        F: Filter
-    {
-        Filtered {
-            generator: self,
-            filter: filter
-        }
-    }
-
-    fn map<F, O>(self, fun: F) -> Filtered<Self, Map<F, Self::Output>> where
-        F: Fn(Self::Output) -> O,
-        Self: Sized
-    {
-        self.filtered(lift(fun))
-    }
-}
-
-impl<S: SignalGenerator> FilterExt for S {}
+impl<S: SignalGenerator> FilteredExt for S {}
