@@ -34,7 +34,13 @@ impl Waveform for Saw {
 
 impl Waveform for Triangle {
     fn phase_amplitude(&self, phase: f32) -> f32 {
-        1.0 - 4.0 * (phase - 0.5).abs()
+        if phase < 0.25 {
+            phase * 4.
+        } else if phase < 0.75 {
+            2. - phase * 4.
+        } else {
+            phase * 4. - 4.
+        }
     }
 }
 
