@@ -1,5 +1,6 @@
 use std;
 
+use synth::equipment::{Equipment, SamplingParameters};
 use synth::signals::SignalGenerator;
 use synth::waveform::{Waveform, Saw, Sine, Rect, Triangle};
 
@@ -42,25 +43,29 @@ impl<Shape, Freq> Oscillator<Shape, Freq> {
     }
 }
 
-impl<Shape, Freq> SignalGenerator for Oscillator<Shape, Freq> where
-    Shape: Waveform,
-    Freq: SignalGenerator<Frame = f32>
+impl<Shape, Freq> Equipment for Oscillator<Shape, Freq> where
+    Freq: Equipment
 {
-    type Frame = f32;
-
-    fn set_sampling_parameters(&mut self, samples_per_second: f32) {
-        self.frequency.set_sampling_parameters(samples_per_second);
-        self.samples_per_second = samples_per_second
-    }
-
-    fn next(&mut self) -> f32 {
-        let value = self.shape.phase_amplitude(self.phase);
-        self.phase = (self.phase + self.frequency.next() / self.samples_per_second).fract();
-        value
+    fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
+        self.frequency.set_sampling_parameters(params);
+        self.samples_per_second = params.sample_rate();
     }
 
     fn reset(&mut self) {
         self.frequency.reset();
         self.phase = 0.0;
+    }
+}
+
+impl<Shape, Freq> SignalGenerator for Oscillator<Shape, Freq> where
+    Shape: Waveform,
+    Freq: SignalGenerator<Output = f32>
+{
+    type Output = f32;
+
+    fn next(&mut self) -> f32 {
+        let value = self.shape.phase_amplitude(self.phase);
+        self.phase = (self.phase + self.frequency.next() / self.samples_per_second).fract();
+        value
     }
 }

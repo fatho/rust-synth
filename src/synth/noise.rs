@@ -4,6 +4,7 @@ use rand::{Rng, NewRng, SeedableRng, XorShiftRng};
 
 use synth::signals::SignalGenerator;
 use synth::sample::Sample;
+use synth::equipment::{Equipment, SamplingParameters};
 
 pub fn white_noise() -> Noise<White, XorShiftRng> {
     Noise::new(White)
@@ -49,19 +50,23 @@ impl<C, R> Clone for Noise<C, R> where
     }
 }
 
-impl<C: NoiseColor, R: Rng + SeedableRng> SignalGenerator for Noise<C, R> where
+impl<C: NoiseColor, R: Rng + SeedableRng> Equipment for Noise<C, R> where
     R::Seed: Clone
 {
-    type Frame = f32;
-
-    fn set_sampling_parameters(&mut self, _: f32) {}
+    fn set_sampling_parameters(&mut self, _: &SamplingParameters) {}
 
     fn reset(&mut self) {
         self.rng.reset();
         self.color.reset();
     }
+}
 
-    fn next(&mut self) -> Self::Frame {
+impl<C: NoiseColor, R: Rng + SeedableRng> SignalGenerator for Noise<C, R> where
+    R::Seed: Clone
+{
+    type Output = f32;
+
+    fn next(&mut self) -> Self::Output {
         self.color.next(&mut self.rng)
     }
 }

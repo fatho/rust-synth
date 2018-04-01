@@ -1,5 +1,5 @@
 use std;
-use std::fmt::{Debug};
+use super::equipment::{Equipment, SamplingParameters};
 
 #[derive(Debug, Clone)]
 pub struct Add<S1, S2>(pub S1, pub S2);
@@ -7,25 +7,10 @@ pub struct Add<S1, S2>(pub S1, pub S2);
 #[derive(Debug, Clone)]
 pub struct Mul<S1, S2>(pub S1, pub S2);
 
-#[derive(Clone)]
-pub struct Map<S, F>(pub S, pub F);
+pub trait SignalGenerator: Equipment {
+    type Output;
 
-impl<S: Debug, F> Debug for Map<S, F> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.debug_tuple("Map")
-            .field(&self.0)
-            .field(&"<function>")
-            .finish()
-    }
-}
-
-
-pub trait SignalGenerator {
-    type Frame;
-
-    fn set_sampling_parameters(&mut self, samples_per_second: f32);
-    fn next(&mut self) -> Self::Frame;
-    fn reset(&mut self);
+    fn next(&mut self) -> Self::Output;
 
     fn add<S>(self, other: S) -> Add<Self, S> where
         S: SignalGenerator,
@@ -40,58 +25,53 @@ pub trait SignalGenerator {
     {
         Mul(self, other)
     }
-
-    fn map<F, NewFrame>(self, fun: F) -> Map<Self, F> where
-        F: FnMut(Self::Frame) -> NewFrame,
-        Self: Sized
-    {
-        Map(self, fun)
-    }
 }
 
 impl SignalGenerator for f32 {
-    type Frame = f32;
-
-    fn set_sampling_parameters(&mut self, _samples_per_second: f32) {
-    }
+    type Output = f32;
 
     fn next(&mut self) -> f32 {
         *self
     }
-
-    fn reset(&mut self) {}
 }
 
 impl<'a, Signal> SignalGenerator for &'a mut Signal where
     Signal: 'a + SignalGenerator
 {
-    type Frame = Signal::Frame;
+    type Output = Signal::Output;
 
-    fn set_sampling_parameters(&mut self, samples_per_second: f32) {
-        (*self).set_sampling_parameters(samples_per_second);
-    }
-
-    fn next(&mut self) -> Self::Frame {
+    fn next(&mut self) -> Self::Output {
         (*self).next()
+    }
+}
+
+impl<S1: Equipment, S2: Equipment> Equipment for Add<S1, S2> {
+    fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
+        self.0.set_sampling_parameters(params);
+        self.1.set_sampling_parameters(params);
     }
 
     fn reset(&mut self) {
-        (*self).reset()
+        self.0.reset();
+        self.1.reset();
     }
 }
 
 impl<S1: SignalGenerator, S2: SignalGenerator> SignalGenerator for Add<S1, S2> where
-    S1::Frame: std::ops::Add<S2::Frame>
+    S1::Output: std::ops::Add<S2::Output>
 {
-    type Frame = <S1::Frame as std::ops::Add<S2::Frame>>::Output;
+    type Output = <S1::Output as std::ops::Add<S2::Output>>::Output;
 
-    fn set_sampling_parameters(&mut self, samples_per_second: f32) {
-        self.0.set_sampling_parameters(samples_per_second);
-        self.1.set_sampling_parameters(samples_per_second);
-    }
-
-    fn next(&mut self) -> Self::Frame {
+    fn next(&mut self) -> Self::Output {
         self.0.next() + self.1.next()
+    }
+}
+
+
+impl<S1: Equipment, S2: Equipment> Equipment for Mul<S1, S2> {
+    fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
+        self.0.set_sampling_parameters(params);
+        self.1.set_sampling_parameters(params);
     }
 
     fn reset(&mut self) {
@@ -101,48 +81,19 @@ impl<S1: SignalGenerator, S2: SignalGenerator> SignalGenerator for Add<S1, S2> w
 }
 
 impl<S1: SignalGenerator, S2: SignalGenerator> SignalGenerator for Mul<S1, S2> where
-    S1::Frame: std::ops::Mul<S2::Frame>
+    S1::Output: std::ops::Mul<S2::Output>
 {
-    type Frame = <S1::Frame as std::ops::Mul<S2::Frame>>::Output;
+    type Output = <S1::Output as std::ops::Mul<S2::Output>>::Output;
 
-    fn set_sampling_parameters(&mut self, samples_per_second: f32) {
-        self.0.set_sampling_parameters(samples_per_second);
-        self.1.set_sampling_parameters(samples_per_second);
-    }
-
-    fn next(&mut self) -> Self::Frame {
+    fn next(&mut self) -> Self::Output {
         self.0.next() * self.1.next()
-    }
-
-    fn reset(&mut self) {
-        self.0.reset();
-        self.1.reset();
-    }
-}
-
-impl<S, F, B> SignalGenerator for Map<S, F> where
-    S: SignalGenerator,
-    F: FnMut(S::Frame) -> B,
-{
-    type Frame = B;
-
-    fn set_sampling_parameters(&mut self, samples_per_second: f32) {
-        self.0.set_sampling_parameters(samples_per_second);
-    }
-
-    fn next(&mut self) -> Self::Frame {
-        self.1(self.0.next())
-    }
-
-    fn reset(&mut self) {
-        self.0.reset();
     }
 }
 
 pub struct SignalIterator<Signal>(pub Signal);
 
 impl<Signal: SignalGenerator> Iterator for SignalIterator<Signal> {
-    type Item = Signal::Frame;
+    type Item = Signal::Output;
 
     fn next(&mut self) -> Option<Self::Item> {
         Some(self.0.next())
