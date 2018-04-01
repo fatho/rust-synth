@@ -4,6 +4,12 @@ use synth::signals::SignalGenerator;
 pub mod filter;
 pub use filter::*;
 
+pub mod delay;
+pub use delay::*;
+
+pub mod distortion;
+pub use distortion::*;
+
 pub mod lowpass;
 pub use lowpass::LowPassRC;
 
