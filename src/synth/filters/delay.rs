@@ -2,9 +2,7 @@
 
 use std;
 
-use synth::foundation::{SoundModule, SamplingParameters};
-use synth::foundation::Filter;
-use synth::foundation::Sample;
+use synth::foundation::{Frequency, Duration, Filter, Sample, SoundModule, SamplingParameters};
 
 #[derive(Debug, Clone)]
 struct RingBuffer<S> {
@@ -51,24 +49,24 @@ impl<S> RingBuffer<S> where
 
 #[derive(Debug, Clone)]
 pub struct Delay<S> {
-    duration_secs: f32,
-    sample_rate: f32,
+    duration: Duration,
+    sample_rate: Frequency,
     delay_buffer: RingBuffer<S>
 }
 
 impl<S> Delay<S> where
     S: Sample
 {
-    pub fn new(duration_secs: f32) -> Self {
+    pub fn new(duration: Duration) -> Self {
         Delay {
-            duration_secs: duration_secs,
-            sample_rate: std::f32::NAN,
+            duration: duration,
+            sample_rate: Frequency::from_hertz(std::f32::NAN),
             delay_buffer: RingBuffer::new(1),
         }
     }
 
     fn reallocate_buffer(&mut self) {
-        let num_samples = (self.sample_rate * self.duration_secs) as usize;
+        let num_samples = (self.sample_rate * self.duration) as usize;
         self.delay_buffer.resize(num_samples.max(1));
     }
 }
@@ -99,26 +97,26 @@ impl<S> Filter for Delay<S> where
 
 #[derive(Debug, Clone)]
 pub struct Echo<S> {
-    duration_secs: f32,
+    duration: Duration,
     dampening: f32,
-    sample_rate: f32,
+    sample_rate: Frequency,
     delay_buffer: RingBuffer<S>
 }
 
 impl<S> Echo<S> where
     S: Sample
 {
-    pub fn new(duration_secs: f32, dampening: f32) -> Self {
+    pub fn new(duration: Duration, dampening: f32) -> Self {
         Echo {
-            duration_secs: duration_secs,
+            duration: duration,
             dampening: dampening,
-            sample_rate: std::f32::NAN,
+            sample_rate: Frequency::from_hertz(std::f32::NAN),
             delay_buffer: RingBuffer::new(1),
         }
     }
 
     fn reallocate_buffer(&mut self) {
-        let num_samples = (self.sample_rate * self.duration_secs) as usize;
+        let num_samples = (self.sample_rate * self.duration) as usize;
         self.delay_buffer.resize(num_samples.max(1));
     }
 }

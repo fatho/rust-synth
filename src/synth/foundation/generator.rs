@@ -1,11 +1,19 @@
 use std;
 use super::module::{SoundModule, SamplingParameters};
 
+#[derive(Debug, Copy, Clone)]
+pub struct Const<T>(pub T);
+
 #[derive(Debug, Clone)]
 pub struct Add<S1, S2>(pub S1, pub S2);
 
 #[derive(Debug, Clone)]
 pub struct Mul<S1, S2>(pub S1, pub S2);
+
+/// Construct constant-valued signal.
+pub fn constant<T>(value: T) -> Const<T> {
+    Const(value)
+}
 
 pub trait SignalGenerator: SoundModule {
     type Output;
@@ -30,9 +38,24 @@ pub trait SignalGenerator: SoundModule {
 impl SignalGenerator for f32 {
     type Output = f32;
 
-    fn next(&mut self) -> f32 {
+    fn next(&mut self) -> Self::Output {
         *self
     }
+}
+
+impl<T: Copy> SignalGenerator for Const<T> {
+    type Output = T;
+
+    fn next(&mut self) -> Self::Output {
+        self.0
+    }
+}
+
+/// Treating constant values as a sound module can be useful.
+impl<T> SoundModule for Const<T> {
+    fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}
+
+    fn reset(&mut self) {}
 }
 
 impl<'a, Signal> SignalGenerator for &'a mut Signal where

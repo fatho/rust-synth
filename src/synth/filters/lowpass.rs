@@ -1,10 +1,10 @@
-use synth::foundation::{Filter, SoundModule, SamplingParameters, Parameter};
+use synth::foundation::{Filter, SoundModule, SamplingParameters, Parameter, Frequency};
 use std;
 
 #[derive(Debug, Clone)]
 pub struct LowPassRC {
-    cutoff_frequency: f32,
-    sample_rate: f32,
+    cutoff_frequency: Frequency,
+    sample_rate: Frequency,
     alpha: f32,
     last_output: f32,
 }
@@ -14,7 +14,7 @@ pub struct CutoffFrequencyParam<Target>(std::marker::PhantomData<Target>);
 
 impl Parameter for CutoffFrequencyParam<LowPassRC> {
     type Target = LowPassRC;
-    type Value = f32;
+    type Value = Frequency;
 
     fn set(&self, target: &mut Self::Target, value: Self::Value) {
         target.set_cutoff_frequency(value);
@@ -24,16 +24,16 @@ impl Parameter for CutoffFrequencyParam<LowPassRC> {
 
 impl LowPassRC {
 
-    pub fn new(cutoff_frequency: f32) -> Self {
+    pub fn new(cutoff_frequency: Frequency) -> Self {
         LowPassRC {
             cutoff_frequency: cutoff_frequency,
-            sample_rate: std::f32::NAN,
+            sample_rate: Frequency::from_hertz(std::f32::NAN),
             last_output: 0.0,
             alpha: std::f32::NAN
         }
     }
 
-    pub fn set_cutoff_frequency(&mut self, cutoff_frequency: f32) {
+    pub fn set_cutoff_frequency(&mut self, cutoff_frequency: Frequency) {
         self.cutoff_frequency = cutoff_frequency;
         self.recompute_coefficient();
     }

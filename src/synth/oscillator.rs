@@ -1,7 +1,6 @@
 use std;
 
-use synth::foundation::{SoundModule, SamplingParameters};
-use synth::foundation::SignalGenerator;
+use synth::foundation::{Frequency, SignalGenerator, SoundModule, SamplingParameters};
 use synth::waveform::{Waveform, Saw, Sine, Rect, Triangle};
 
 pub fn sine<F: SignalGenerator>(frequency: F) -> Oscillator<Sine, F> {
@@ -29,7 +28,7 @@ pub struct Oscillator<Shape, Freq> {
     phase: f32,
     frequency: Freq,
     shape: Shape,
-    samples_per_second: f32
+    samples_per_second: Frequency
 }
 
 impl<Shape, Freq> Oscillator<Shape, Freq> {
@@ -38,7 +37,7 @@ impl<Shape, Freq> Oscillator<Shape, Freq> {
             phase: 0.0f32,
             frequency: frequency,
             shape: shape,
-            samples_per_second: std::f32::NAN
+            samples_per_second: Frequency::from_hertz(std::f32::NAN)
         }
     }
 }
@@ -59,7 +58,7 @@ impl<Shape, Freq> SoundModule for Oscillator<Shape, Freq> where
 
 impl<Shape, Freq> SignalGenerator for Oscillator<Shape, Freq> where
     Shape: Waveform,
-    Freq: SignalGenerator<Output = f32>
+    Freq: SignalGenerator<Output = Frequency>
 {
     type Output = f32;
 

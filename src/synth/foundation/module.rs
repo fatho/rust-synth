@@ -1,34 +1,36 @@
 use std;
 
+use super::types::Frequency;
+
 /// Parameters that influence how sound is generated and communicated between
 /// different pieces of equipment.
 pub struct SamplingParameters {
     /// The number of samples per second.
-    pub samples_per_second: f32
+    pub sample_rate: Frequency
 }
 
 impl SamplingParameters {
     pub fn audio_cd() -> SamplingParameters {
-        Self::with_rate(44100.0)
+        Self::with_rate(Frequency::from_hertz(44100.0))
     }
 
     /// Construct sampling parameters for a given sampling rate measured in Hz.
-    pub fn with_rate(sample_rate: f32) -> SamplingParameters {
+    pub fn with_rate(sample_rate: Frequency) -> SamplingParameters {
         SamplingParameters {
-            samples_per_second: sample_rate
+            sample_rate: sample_rate
         }
     }
 
     /// Return the current sample rate.
-    pub fn sample_rate(&self) -> f32 {
-        self.samples_per_second
+    pub fn sample_rate(&self) -> Frequency {
+        self.sample_rate
     }
 
     /// Return the Nyquist frequency associated with these parameters. This is
     /// the maximum audio frequency that can be represented with the given
     /// sample rate.
-    pub fn nyquist_rate(&self) -> f32 {
-        self.samples_per_second / 2.0
+    pub fn nyquist_rate(&self) -> Frequency {
+        self.sample_rate / 2.0
     }
 }
 
