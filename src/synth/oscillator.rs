@@ -1,6 +1,6 @@
 use std;
 
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 use synth::signals::SignalGenerator;
 use synth::waveform::{Waveform, Saw, Sine, Rect, Triangle};
 
@@ -43,8 +43,8 @@ impl<Shape, Freq> Oscillator<Shape, Freq> {
     }
 }
 
-impl<Shape, Freq> Equipment for Oscillator<Shape, Freq> where
-    Freq: Equipment
+impl<Shape, Freq> SoundModule for Oscillator<Shape, Freq> where
+    Freq: SoundModule
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.frequency.set_sampling_parameters(params);

@@ -1,4 +1,4 @@
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 use synth::signals::SignalGenerator;
 use synth::knob::Knob;
 
@@ -17,6 +17,8 @@ pub use inspection::*;
 pub mod lowpass;
 pub use lowpass::LowPassRC;
 
+/// Convenience trait for constructing a filtered signal generator. It is
+/// automatically implemented for all signal generators.
 pub trait FilteredExt: SignalGenerator {
     fn filtered<F>(self, filter: F) -> Filtered<Self, F> where
         Self: Sized,
@@ -35,8 +37,9 @@ pub trait FilteredExt: SignalGenerator {
         self.filtered(lift(fun))
     }
 
-    fn frobnicate<T>(self, knob: Knob<T>) -> Filtered<Self, Frobnicator<T>> where
-        T: Copy,
+    /// Continuously adjust the knob according to the output signal of this generator.
+    fn frobnicate(self, knob: Knob<Self::Output>) -> Filtered<Self, Frobnicator<Self::Output>> where
+        Self::Output: Copy,
         Self: Sized
     {
         self.filtered(Frobnicator::new(knob))
@@ -50,8 +53,8 @@ pub struct Filtered<S, F> {
     filter: F,
 }
 
-impl<S, F> Equipment for Filtered<S, F> where
-    S: Equipment, F: Equipment
+impl<S, F> SoundModule for Filtered<S, F> where
+    S: SoundModule, F: SoundModule
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.filter.set_sampling_parameters(params);

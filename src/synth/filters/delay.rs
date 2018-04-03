@@ -1,6 +1,8 @@
+//! A module for filters that need some sort of delay.
+
 use std;
 
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 use synth::filters::filter::Filter;
 use synth::sample::Sample;
 
@@ -71,7 +73,7 @@ impl<S> Delay<S> where
     }
 }
 
-impl<S> Equipment for Delay<S> where
+impl<S> SoundModule for Delay<S> where
     S: Sample
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
@@ -121,7 +123,7 @@ impl<S> Echo<S> where
     }
 }
 
-impl<S> Equipment for Echo<S> where
+impl<S> SoundModule for Echo<S> where
     S: Sample
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {

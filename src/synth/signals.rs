@@ -1,5 +1,5 @@
 use std;
-use super::equipment::{Equipment, SamplingParameters};
+use super::module::{SoundModule, SamplingParameters};
 
 #[derive(Debug, Clone)]
 pub struct Add<S1, S2>(pub S1, pub S2);
@@ -7,7 +7,7 @@ pub struct Add<S1, S2>(pub S1, pub S2);
 #[derive(Debug, Clone)]
 pub struct Mul<S1, S2>(pub S1, pub S2);
 
-pub trait SignalGenerator: Equipment {
+pub trait SignalGenerator: SoundModule {
     type Output;
 
     fn next(&mut self) -> Self::Output;
@@ -45,7 +45,7 @@ impl<'a, Signal> SignalGenerator for &'a mut Signal where
     }
 }
 
-impl<S1: Equipment, S2: Equipment> Equipment for Add<S1, S2> {
+impl<S1: SoundModule, S2: SoundModule> SoundModule for Add<S1, S2> {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.0.set_sampling_parameters(params);
         self.1.set_sampling_parameters(params);
@@ -68,7 +68,7 @@ impl<S1: SignalGenerator, S2: SignalGenerator> SignalGenerator for Add<S1, S2> w
 }
 
 
-impl<S1: Equipment, S2: Equipment> Equipment for Mul<S1, S2> {
+impl<S1: SoundModule, S2: SoundModule> SoundModule for Mul<S1, S2> {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.0.set_sampling_parameters(params);
         self.1.set_sampling_parameters(params);

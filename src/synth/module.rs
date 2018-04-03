@@ -34,7 +34,7 @@ impl SamplingParameters {
 
 
 /// A general trait for all things that are considered part of a synthesizer.
-pub trait Equipment {
+pub trait SoundModule {
     /// Reset the internal state of the piece of equipment (e.g. transient state
     /// that is (usually) not directly set by the user).
     fn reset(&mut self);
@@ -55,7 +55,7 @@ pub trait Parameter {
     fn set(&self, target: &mut Self::Target, value: Self::Value);
 }
 
-/// A parameter that refers to the equipment as a whole.
+/// A parameter that refers to the sound module as a whole.
 pub struct SelfParameter<T>(std::marker::PhantomData<T>);
 
 impl<T> Parameter for SelfParameter<T> {
@@ -67,16 +67,16 @@ impl<T> Parameter for SelfParameter<T> {
     }
 }
 
-/// Treating constant values as a piece of equipment can be useful.
-impl Equipment for f32 {
+/// Treating constant values as a sound module can be useful.
+impl SoundModule for f32 {
     fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}
 
     fn reset(&mut self) {}
 }
 
 
-impl<'a, E> Equipment for &'a mut E where
-    E: 'a + Equipment
+impl<'a, E> SoundModule for &'a mut E where
+    E: 'a + SoundModule
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         (*self).set_sampling_parameters(params);

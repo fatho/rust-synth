@@ -5,7 +5,7 @@ use byteorder::{WriteBytesExt,LittleEndian};
 
 pub mod synth;
 use synth::automation::*;
-use synth::equipment::*;
+use synth::module::*;
 use synth::oscillator::*;
 use synth::signals::*;
 use synth::noise::*;

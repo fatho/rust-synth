@@ -1,5 +1,7 @@
+//! A module for filters that distort a signal.
+
 use super::filter::Filter;
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 use synth::sample::{hard_limit};
 
 #[derive(Debug, Clone)]
@@ -16,7 +18,7 @@ impl Overdrive {
     }
 }
 
-impl Equipment for Overdrive
+impl SoundModule for Overdrive
 {
     fn reset(&mut self) {}
 

@@ -1,6 +1,6 @@
 use super::filter::Filter;
 
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 use synth::knob::Knob;
 
 /// A frobnicator is a filter that leaves a signal unchanged, but uses it to set
@@ -18,7 +18,7 @@ impl<T: Copy> Frobnicator<T> {
     }
 }
 
-impl<T: Copy> Equipment for Frobnicator<T> {
+impl<T: Copy> SoundModule for Frobnicator<T> {
     fn reset(&mut self) {}
 
     fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}

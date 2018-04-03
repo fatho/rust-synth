@@ -1,5 +1,5 @@
 use super::filter::Filter;
-use synth::equipment::{Equipment, SamplingParameters, Parameter};
+use synth::module::{SoundModule, SamplingParameters, Parameter};
 use std;
 
 #[derive(Debug, Clone)]
@@ -49,7 +49,7 @@ impl LowPassRC {
     }
 }
 
-impl Equipment for LowPassRC {
+impl SoundModule for LowPassRC {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.sample_rate = params.sample_rate();
         self.recompute_coefficient();

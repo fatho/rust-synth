@@ -2,15 +2,16 @@ use std;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 
 /// The identity filter, returning a signal unchanged.
 #[derive(Debug, Clone)]
 pub struct Id<S>(PhantomData<S>);
 
-/// The compose filter, first applying F1, and then F2 to the result of F1.
+/// Two filters chained together, first applying F1, and then F2 to the result
+/// of F1.
 #[derive(Debug, Clone)]
-pub struct Compose<F1, F2>(pub F1, pub F2);
+pub struct Chain<F1, F2>(pub F1, pub F2);
 
 /// The split filter copies the output of a filter so that it can be processed
 /// differently.
@@ -48,16 +49,16 @@ pub fn lift<F, I, O>(fun: F) -> Map<F, I> where
     Map(fun, PhantomData)
 }
 
-pub trait Filter: Equipment {
+pub trait Filter: SoundModule {
     type Input;
     type Output;
 
     fn filter(&mut self, input: Self::Input) -> Self::Output;
 
-    fn chain<F>(self, next: F) -> Compose<Self, F> where
+    fn chain<F>(self, next: F) -> Chain<Self, F> where
         Self: Sized
     {
-        Compose(self, next)
+        Chain(self, next)
     }
 
     fn dry(self, dryness: f32, wetness: f32) -> Dried<Self> where
@@ -71,7 +72,7 @@ pub trait Filter: Equipment {
     }
 }
 
-impl<S> Equipment for Id<S> {
+impl<S> SoundModule for Id<S> {
     fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}
 
     fn reset(&mut self) {}
@@ -86,9 +87,9 @@ impl<S> Filter for Id<S> {
     }
 }
 
-impl<F1,F2> Equipment for Compose<F1, F2> where
-    F1: Equipment,
-    F2: Equipment
+impl<F1,F2> SoundModule for Chain<F1, F2> where
+    F1: SoundModule,
+    F2: SoundModule
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.0.set_sampling_parameters(params);
@@ -101,7 +102,7 @@ impl<F1,F2> Equipment for Compose<F1, F2> where
     }
 }
 
-impl<F1, F2> Filter for Compose<F1, F2> where
+impl<F1, F2> Filter for Chain<F1, F2> where
     F1: Filter,
     F2: Filter<Input=F1::Output>
 {
@@ -113,8 +114,8 @@ impl<F1, F2> Filter for Compose<F1, F2> where
     }
 }
 
-impl<F> Equipment for Split<F> where
-    F: Equipment
+impl<F> SoundModule for Split<F> where
+    F: SoundModule
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.0.set_sampling_parameters(params);
@@ -138,7 +139,7 @@ impl<F> Filter for Split<F> where
     }
 }
 
-impl<F, I> Equipment for Map<F, I>
+impl<F, I> SoundModule for Map<F, I>
 {
     fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}
 
@@ -156,8 +157,8 @@ impl<F, I, O> Filter for Map<F, I> where
     }
 }
 
-impl<F> Equipment for Dried<F> where
-    F: Equipment
+impl<F> SoundModule for Dried<F> where
+    F: SoundModule
 {
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {
         self.filter.set_sampling_parameters(params);

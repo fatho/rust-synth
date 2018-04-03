@@ -2,7 +2,7 @@ use std;
 use std::cell::Cell;
 use std::rc::Rc;
 
-use synth::equipment::{Equipment, SamplingParameters};
+use synth::module::{SoundModule, SamplingParameters};
 use synth::signals::SignalGenerator;
 
 /// A knob holds a value that can be used to set parameters in a signal generator.
@@ -17,7 +17,7 @@ pub struct KnobGenerator<T: Copy> {
     value: Rc<Cell<T>>
 }
 
-impl<T: Copy> Equipment for KnobGenerator<T> {
+impl<T: Copy> SoundModule for KnobGenerator<T> {
     fn reset(&mut self) {}
 
     fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}

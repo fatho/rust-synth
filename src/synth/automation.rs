@@ -1,6 +1,6 @@
 use std;
 
-use synth::equipment::{Equipment, Parameter, SamplingParameters};
+use synth::module::{SoundModule, Parameter, SamplingParameters};
 use synth::signals::SignalGenerator;
 use synth::filters::Filter;
 
@@ -29,7 +29,7 @@ impl<E, C: Controller<E>> Automated<E,C> {
 
 }
 
-pub trait AutomationExt: Equipment {
+pub trait AutomationExt: SoundModule {
     fn automated(self) -> Automated<Self, NopController<Self>> where
         Self: Sized
     {
@@ -40,11 +40,11 @@ pub trait AutomationExt: Equipment {
     }
 }
 
-impl<E: Equipment> AutomationExt for E {}
+impl<E: SoundModule> AutomationExt for E {}
 
-impl<E, C> Equipment for Automated<E, C> where
-    E: Equipment,
-    C: Equipment
+impl<E, C> SoundModule for Automated<E, C> where
+    E: SoundModule,
+    C: SoundModule
 {
     fn reset(&mut self) {
         self.equipment.reset();
@@ -83,7 +83,7 @@ impl<E, C> SignalGenerator for Automated<E, C> where
 }
 
 /// A controller modifies a piece of equipment.
-pub trait Controller<E>: Equipment {
+pub trait Controller<E>: SoundModule {
     fn update(&mut self, &mut E);
 }
 
@@ -101,9 +101,9 @@ impl<E, C: Controller<E>> ControllerExt<E> for C {}
 #[derive(Debug, Clone)]
 pub struct ChainController<C1, C2>(pub C1, pub C2);
 
-impl<C1, C2> Equipment for ChainController<C1, C2> where
-    C1: Equipment,
-    C2: Equipment
+impl<C1, C2> SoundModule for ChainController<C1, C2> where
+    C1: SoundModule,
+    C2: SoundModule
 {
     fn reset(&mut self) {
         self.0.reset();
@@ -133,8 +133,8 @@ pub struct GeneratorController<Param, Gen> {
     value_gen: Gen
 }
 
-impl<P, G> Equipment for GeneratorController<P, G> where
-    G: Equipment
+impl<P, G> SoundModule for GeneratorController<P, G> where
+    G: SoundModule
 {
     fn reset(&mut self) {
         self.value_gen.reset();
@@ -159,7 +159,7 @@ impl<P, S> Controller<P::Target> for GeneratorController<P, S> where
 pub struct NopController<E>(std::marker::PhantomData<E>);
 
 
-impl<E> Equipment for NopController<E> {
+impl<E> SoundModule for NopController<E> {
     fn reset(&mut self) {}
 
     fn set_sampling_parameters(&mut self, params: &SamplingParameters) {}
