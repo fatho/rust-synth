@@ -4,23 +4,23 @@ use synth::foundation::{SoundModule, SamplingParameters};
 use synth::foundation::SignalGenerator;
 use synth::waveform::{Waveform, Saw, Sine, Rect, Triangle};
 
-pub fn sine<F>(frequency: F) -> Oscillator<Sine, F> {
+pub fn sine<F: SignalGenerator>(frequency: F) -> Oscillator<Sine, F> {
     Oscillator::new(frequency, Sine)
 }
 
-pub fn saw<F>(frequency: F) -> Oscillator<Saw, F> {
+pub fn saw<F: SignalGenerator>(frequency: F) -> Oscillator<Saw, F> {
     Oscillator::new(frequency, Saw)
 }
 
-pub fn triangle<F>(frequency: F) -> Oscillator<Triangle, F> {
+pub fn triangle<F: SignalGenerator>(frequency: F) -> Oscillator<Triangle, F> {
     Oscillator::new(frequency, Triangle)
 }
 
-pub fn square<F>(frequency: F) -> Oscillator<Rect, F> {
+pub fn square<F: SignalGenerator>(frequency: F) -> Oscillator<Rect, F> {
     Oscillator::new(frequency, Rect(0.5))
 }
 
-pub fn rect<F>(duty_cycle: f32, frequency: F) -> Oscillator<Rect, F> {
+pub fn rect<F: SignalGenerator>(duty_cycle: f32, frequency: F) -> Oscillator<Rect, F> {
     Oscillator::new(frequency, Rect(duty_cycle))
 }
 
