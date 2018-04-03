@@ -1,8 +1,8 @@
 use std;
 
-use synth::module::{SoundModule, Parameter, SamplingParameters};
-use synth::signals::SignalGenerator;
-use synth::filters::Filter;
+use synth::foundation::{SoundModule, Parameter, SamplingParameters};
+use synth::foundation::SignalGenerator;
+use synth::foundation::Filter;
 
 /// A piece of equipment that has some parameters set through automation.
 #[derive(Debug, Clone)]

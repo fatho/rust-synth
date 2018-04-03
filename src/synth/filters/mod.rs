@@ -1,9 +1,6 @@
-use synth::module::{SoundModule, SamplingParameters};
-use synth::signals::SignalGenerator;
+use synth::foundation::{Filter, SoundModule, SignalGenerator, SamplingParameters};
+use synth::foundation::filter;
 use synth::knob::Knob;
-
-pub mod filter;
-pub use filter::*;
 
 pub mod delay;
 pub use delay::*;
@@ -13,6 +10,9 @@ pub use distortion::*;
 
 pub mod inspection;
 pub use inspection::*;
+
+pub mod limiter;
+pub use limiter::*;
 
 pub mod lowpass;
 pub use lowpass::LowPassRC;
@@ -30,11 +30,11 @@ pub trait FilteredExt: SignalGenerator {
         }
     }
 
-    fn map<F, O>(self, fun: F) -> Filtered<Self, Map<F, Self::Output>> where
+    fn map<F, O>(self, fun: F) -> Filtered<Self, filter::Map<F, Self::Output>> where
         F: Fn(Self::Output) -> O,
         Self: Sized
     {
-        self.filtered(lift(fun))
+        self.filtered(filter::lift(fun))
     }
 
     /// Continuously adjust the knob according to the output signal of this generator.

@@ -2,9 +2,9 @@
 
 use std;
 
-use synth::module::{SoundModule, SamplingParameters};
-use synth::filters::filter::Filter;
-use synth::sample::Sample;
+use synth::foundation::{SoundModule, SamplingParameters};
+use synth::foundation::Filter;
+use synth::foundation::Sample;
 
 #[derive(Debug, Clone)]
 struct RingBuffer<S> {

@@ -103,3 +103,4 @@ impl<Signal: SignalGenerator> Iterator for SignalIterator<Signal> {
         (std::usize::MAX, None)
     }
 }
+

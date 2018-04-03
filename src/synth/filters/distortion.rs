@@ -1,8 +1,8 @@
 //! A module for filters that distort a signal.
 
-use super::filter::Filter;
-use synth::module::{SoundModule, SamplingParameters};
-use synth::sample::{hard_limit};
+use synth::foundation::Filter;
+use synth::foundation::{SoundModule, SamplingParameters};
+use super::limiter::{hard_limit};
 
 #[derive(Debug, Clone)]
 pub struct Overdrive {

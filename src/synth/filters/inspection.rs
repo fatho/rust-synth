@@ -1,6 +1,4 @@
-use super::filter::Filter;
-
-use synth::module::{SoundModule, SamplingParameters};
+use synth::foundation::{Filter, SoundModule, SamplingParameters};
 use synth::knob::Knob;
 
 /// A frobnicator is a filter that leaves a signal unchanged, but uses it to set

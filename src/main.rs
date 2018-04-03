@@ -5,13 +5,11 @@ use byteorder::{WriteBytesExt,LittleEndian};
 
 pub mod synth;
 use synth::automation::*;
-use synth::module::*;
+use synth::foundation::*;
 use synth::oscillator::*;
-use synth::signals::*;
 use synth::noise::*;
 use synth::filters::*;
 use synth::knob::*;
-use synth::sample;
 
 fn main() {
     let sampling_params = SamplingParameters::audio_cd();
@@ -45,9 +43,9 @@ fn main() {
 
     let mut out = std::io::stdout();
 
-    SignalIterator(&mut gen)
-        .map(sample::hard_limit)
-        .map(sample::Resample::resample)
+    generator::SignalIterator(&mut gen)
+        .map(hard_limit)
+        .map(Resample::resample)
         .take(sampling_params.sample_rate() as usize * 10)
         .for_each(|value| out.write_i16::<LittleEndian>(value).unwrap());
 

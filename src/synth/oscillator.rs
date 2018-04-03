@@ -1,7 +1,7 @@
 use std;
 
-use synth::module::{SoundModule, SamplingParameters};
-use synth::signals::SignalGenerator;
+use synth::foundation::{SoundModule, SamplingParameters};
+use synth::foundation::SignalGenerator;
 use synth::waveform::{Waveform, Saw, Sine, Rect, Triangle};
 
 pub fn sine<F>(frequency: F) -> Oscillator<Sine, F> {

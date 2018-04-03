@@ -1,5 +1,4 @@
-use super::filter::Filter;
-use synth::module::{SoundModule, SamplingParameters, Parameter};
+use synth::foundation::{Filter, SoundModule, SamplingParameters, Parameter};
 use std;
 
 #[derive(Debug, Clone)]
