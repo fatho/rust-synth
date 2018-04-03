@@ -4,7 +4,6 @@ extern crate rand;
 use byteorder::{WriteBytesExt,LittleEndian};
 
 pub mod synth;
-use synth::automation::*;
 use synth::foundation::*;
 use synth::oscillator::*;
 use synth::noise::*;
@@ -29,9 +28,7 @@ fn main() {
         .add(saw(freq_knob.as_generator().mul(half_tone.powi(3))).mul(0.3))
         .add(square(freq_knob.as_generator().mul(half_tone.powi(7)).mul(noise_amp.add(1.))).mul(0.3))
         .add(pink_noise().mul(0.05))
-        .filtered(LowPassRC::new(440.0 * u::HZ)
-                  .automated()
-                  .with_generated_param(LowPassRC::cutoff_frequency(), lfo))
+        .filtered(LowPassRC::new(lfo))
         .filtered(Echo::new(0.5 * units::S, 0.5))
         .mul(ampl)
         ;

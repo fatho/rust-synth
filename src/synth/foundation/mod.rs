@@ -6,7 +6,7 @@ pub mod generator;
 pub mod filter;
 
 pub use sample::{Sample, Resample};
-pub use module::{SoundModule, SamplingParameters, Parameter};
+pub use module::{SoundModule, SamplingParameters};
 pub use generator::{SignalGenerator};
 pub use filter::Filter;
 pub use types::{Frequency, Duration, units};

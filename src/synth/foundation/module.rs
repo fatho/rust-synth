@@ -49,26 +49,6 @@ pub trait SoundModule {
     // fn load(...) -> Self;
 }
 
-/// A parameter of a piece of equipment can be changed through automation.
-pub trait Parameter {
-    type Target;
-    type Value;
-
-    fn set(&self, target: &mut Self::Target, value: Self::Value);
-}
-
-/// A parameter that refers to the sound module as a whole.
-pub struct SelfParameter<T>(std::marker::PhantomData<T>);
-
-impl<T> Parameter for SelfParameter<T> {
-    type Target = T;
-    type Value = T;
-
-    fn set(&self, target: &mut Self::Target, value: Self::Value) {
-        std::mem::replace(target, value);
-    }
-}
-
 /// Treating constant values as a sound module can be useful.
 impl SoundModule for f32 {
     fn set_sampling_parameters(&mut self, _params: &SamplingParameters) {}

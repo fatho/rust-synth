@@ -4,5 +4,4 @@ pub mod oscillator;
 pub mod waveform;
 pub mod noise;
 pub mod filters;
-pub mod automation;
 pub mod knob;
