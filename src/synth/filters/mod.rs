@@ -1,5 +1,6 @@
 use synth::equipment::{Equipment, SamplingParameters};
 use synth::signals::SignalGenerator;
+use synth::knob::Knob;
 
 pub mod filter;
 pub use filter::*;
@@ -9,6 +10,9 @@ pub use delay::*;
 
 pub mod distortion;
 pub use distortion::*;
+
+pub mod inspection;
+pub use inspection::*;
 
 pub mod lowpass;
 pub use lowpass::LowPassRC;
@@ -29,6 +33,13 @@ pub trait FilteredExt: SignalGenerator {
         Self: Sized
     {
         self.filtered(lift(fun))
+    }
+
+    fn frobnicate<T>(self, knob: Knob<T>) -> Filtered<Self, Frobnicator<T>> where
+        T: Copy,
+        Self: Sized
+    {
+        self.filtered(Frobnicator::new(knob))
     }
 }
 

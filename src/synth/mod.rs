@@ -6,3 +6,4 @@ pub mod noise;
 pub mod filters;
 pub mod equipment;
 pub mod automation;
+pub mod knob;
