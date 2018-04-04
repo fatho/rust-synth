@@ -1,6 +1,6 @@
 use std;
 
-use synth::foundation::Sample;
+use foundation::Sample;
 
 fn clamp<A>(value: A, min: A, max: A) -> A where
     A: Copy + PartialOrd

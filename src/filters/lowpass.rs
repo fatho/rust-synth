@@ -1,4 +1,4 @@
-use synth::foundation::{Filter, SignalGenerator, SoundModule, SamplingParameters, Frequency};
+use foundation::{Filter, SignalGenerator, SoundModule, SamplingParameters, Frequency};
 use std;
 
 #[derive(Debug, Clone)]

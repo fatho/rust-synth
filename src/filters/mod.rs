@@ -1,21 +1,21 @@
-use synth::foundation::{Filter, SoundModule, SignalGenerator, SamplingParameters};
-use synth::foundation::filter;
-use synth::knob::Knob;
+use foundation::{Filter, SoundModule, SignalGenerator, SamplingParameters};
+use foundation::filter;
+use knob::Knob;
 
 pub mod delay;
-pub use delay::*;
+pub use self::delay::*;
 
 pub mod distortion;
-pub use distortion::*;
+pub use self::distortion::*;
 
 pub mod inspection;
-pub use inspection::*;
+pub use self::inspection::*;
 
 pub mod limiter;
-pub use limiter::*;
+pub use self::limiter::*;
 
 pub mod lowpass;
-pub use lowpass::LowPassRC;
+pub use self::lowpass::LowPassRC;
 
 /// Convenience trait for constructing a filtered signal generator. It is
 /// automatically implemented for all signal generators.

@@ -2,7 +2,7 @@
 
 use std;
 
-use synth::foundation::{Frequency, Duration, Filter, Sample, SoundModule, SamplingParameters};
+use foundation::{Frequency, Duration, Filter, Sample, SoundModule, SamplingParameters};
 
 #[derive(Debug, Clone)]
 struct RingBuffer<S> {

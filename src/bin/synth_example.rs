@@ -3,7 +3,8 @@ extern crate rand;
 
 use byteorder::{WriteBytesExt,LittleEndian};
 
-pub mod synth;
+extern crate synth;
+
 use synth::foundation::*;
 use synth::oscillator::*;
 use synth::noise::*;
@@ -36,16 +37,16 @@ fn main() {
     freq_knob.set(a1 / 2.);
 
     gen.set_sampling_parameters(&sampling_params);
-    eprintln!("{:?}", gen);
+    // eprintln!("{:?}", gen);
 
-    let mut out = std::io::stdout();
+    let mut out = std::io::BufWriter::new(std::io::stdout());
 
     generator::SignalIterator(&mut gen)
         .map(hard_limit)
         .map(Resample::resample)
-        .take(sampling_params.sample_rate().to_hertz() as usize * 10)
+        .take(sampling_params.sample_rate().to_hertz() as usize * 20)
         .for_each(|value| out.write_i16::<LittleEndian>(value).unwrap());
 
-    eprintln!("{:?}", gen);
+    // eprintln!("{:?}", gen);
 }
 

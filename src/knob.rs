@@ -2,8 +2,8 @@ use std;
 use std::cell::Cell;
 use std::rc::Rc;
 
-use synth::foundation::{SoundModule, SamplingParameters};
-use synth::foundation::SignalGenerator;
+use foundation::{SoundModule, SamplingParameters};
+use foundation::SignalGenerator;
 
 /// A knob holds a value that can be used to set parameters in a signal generator.
 #[derive(Debug)]

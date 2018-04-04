@@ -1,7 +1,7 @@
 //! A module for filters that distort a signal.
 
-use synth::foundation::Filter;
-use synth::foundation::{SoundModule, SamplingParameters};
+use foundation::Filter;
+use foundation::{SoundModule, SamplingParameters};
 use super::limiter::{hard_limit};
 
 #[derive(Debug, Clone)]

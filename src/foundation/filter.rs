@@ -2,7 +2,7 @@ use std;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 
-use synth::foundation::{SoundModule, SamplingParameters};
+use foundation::{SoundModule, SamplingParameters};
 
 /// The identity filter, returning a signal unchanged.
 #[derive(Debug, Clone)]

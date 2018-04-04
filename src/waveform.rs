@@ -63,7 +63,7 @@ impl<T> Waveform for Wavetable<T> where
         let length = self.0.len();
         let index = phase * length as f32;
         let index1 = index.floor() as usize % length;
-        let index2 = index.ceil() as usize % length;
+        let index2 = (index1 + 1) % length;
         let interp = index.fract();
         (1.0 - interp) * self.0[index1] + interp * self.0[index2]
     }

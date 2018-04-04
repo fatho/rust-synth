@@ -2,7 +2,7 @@ use std;
 use std::fmt::Debug;
 use rand::{Rng, NewRng, SeedableRng, XorShiftRng};
 
-use synth::foundation::{SignalGenerator, Sample, SoundModule, SamplingParameters};
+use foundation::{SignalGenerator, Sample, SoundModule, SamplingParameters};
 
 pub fn white_noise() -> Noise<White, XorShiftRng> {
     Noise::new(White)
