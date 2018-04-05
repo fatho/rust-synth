@@ -1,5 +1,3 @@
-use std;
-
 use super::types::Frequency;
 
 /// Parameters that influence how sound is generated and communicated between

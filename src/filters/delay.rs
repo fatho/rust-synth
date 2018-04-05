@@ -30,7 +30,10 @@ impl<S> RingBuffer<S> where
     }
 
     fn forward(&mut self) {
-        self.index = (self.index + 1) % self.buffer.len();
+        self.index += 1;
+        if self.index == self.buffer.len() {
+            self.index = 0;
+        }
     }
 
     fn shift(&mut self, in_value: S) -> S {

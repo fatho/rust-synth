@@ -7,3 +7,4 @@ pub mod waveform;
 pub mod noise;
 pub mod filters;
 pub mod knob;
+pub mod data;

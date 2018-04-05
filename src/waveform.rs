@@ -1,6 +1,7 @@
 use std;
 
 pub trait Waveform {
+    /// Return the amplitude at the given phase offset in the interval `[0-1)`
     fn phase_amplitude(&self, phase: f32) -> f32;
 }
 
@@ -21,18 +22,21 @@ pub struct Rect(pub f32);
 pub struct Wavetable<T>(pub T);
 
 impl Waveform for Sine {
+    #[inline(always)]
     fn phase_amplitude(&self, phase: f32) -> f32 {
-        (2.0 * std::f32::consts::PI * phase.fract()).sin()
+        (2.0 * std::f32::consts::PI * phase).sin()
     }
 }
 
 impl Waveform for Saw {
+    #[inline(always)]
     fn phase_amplitude(&self, phase: f32) -> f32 {
-        2.0 * (phase % 1.0) - 1.0
+        2.0 * phase - 1.0
     }
 }
 
 impl Waveform for Triangle {
+    #[inline(always)]
     fn phase_amplitude(&self, phase: f32) -> f32 {
         if phase < 0.25 {
             phase * 4.
@@ -45,6 +49,7 @@ impl Waveform for Triangle {
 }
 
 impl Waveform for Rect {
+    #[inline(always)]
     fn phase_amplitude(&self, phase: f32) -> f32 {
         if phase < self.0 {
             -1.0

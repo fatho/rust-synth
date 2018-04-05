@@ -64,6 +64,7 @@ impl<C: NoiseColor, R: Rng + SeedableRng> SignalGenerator for Noise<C, R> where
 {
     type Output = f32;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         self.color.next(&mut self.rng)
     }
@@ -85,6 +86,8 @@ pub struct White;
 
 impl NoiseColor for White {
     fn reset(&mut self) {}
+
+    #[inline(always)]
     fn next<R>(&mut self, rng: &mut R) -> f32 where R: Rng {
         rng.gen_range(<f32 as Sample>::lower_limit(), <f32 as Sample>::upper_limit())
     }
@@ -110,7 +113,6 @@ impl NoiseColor for Pink {
         // Voss-Mc Cartney algorithm for pink noise generation
         // http://www.firstpr.com.au/dsp/pink-noise/#Voss-McCartney
         let cur_octave = (self.counter | Pink::COUNTER_LEADING_MASK).trailing_zeros() as usize;
-        assert!(cur_octave < Pink::NUM_OCTAVES);
 
         let previous = self.octaves[cur_octave];
         let next = rng.gen::<i32>() >> Pink::NOISE_SHIFT;

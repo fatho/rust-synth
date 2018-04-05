@@ -82,6 +82,7 @@ impl<S> Filter for Id<S> {
     type Input = S;
     type Output = S;
 
+    #[inline(always)]
     fn filter(&mut self, input: S) -> S {
         input
     }
@@ -109,6 +110,7 @@ impl<F1, F2> Filter for Chain<F1, F2> where
     type Input = F1::Input;
     type Output = F2::Output;
 
+    #[inline(always)]
     fn filter(&mut self, input: Self::Input) -> Self::Output {
         self.1.filter(self.0.filter(input))
     }
@@ -133,6 +135,7 @@ impl<F> Filter for Split<F> where
     type Input = F::Input;
     type Output = (F::Output, F::Output);
 
+    #[inline(always)]
     fn filter(&mut self, input: Self::Input) -> Self::Output {
         let output = self.0.filter(input);
         (output.clone(), output)
@@ -152,6 +155,7 @@ impl<F, I, O> Filter for Map<F, I> where
     type Input = I;
     type Output = F::Output;
 
+    #[inline(always)]
     fn filter(&mut self, input: Self::Input) -> Self::Output {
         self.0(input)
     }
@@ -178,6 +182,7 @@ impl<F> Filter for Dried<F> where
     type Input = F::Input;
     type Output = F::Output;
 
+    #[inline(always)]
     fn filter(&mut self, input: Self::Input) -> Self::Output {
          input * self.dry + self.filter.filter(input) * self.wet
     }
@@ -189,6 +194,7 @@ impl<'a, F> Filter for &'a mut F where
     type Input = F::Input;
     type Output = F::Output;
 
+    #[inline(always)]
     fn filter(&mut self, input: Self::Input) -> Self::Output {
         (*self).filter(input)
     }

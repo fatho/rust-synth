@@ -38,6 +38,7 @@ impl Duration {
 impl Div<Duration> for f32 {
     type Output = Frequency;
 
+    #[inline(always)]
     fn div(self, duration: Duration) -> Self::Output {
         Frequency(self / duration.0)
     }
@@ -46,6 +47,7 @@ impl Div<Duration> for f32 {
 impl Div<Frequency> for f32 {
     type Output = Duration;
 
+    #[inline(always)]
     fn div(self, duration: Frequency) -> Self::Output {
         Duration(self / duration.0)
     }
@@ -54,6 +56,7 @@ impl Div<Frequency> for f32 {
 impl Mul<Frequency> for Duration {
     type Output = f32;
 
+    #[inline(always)]
     fn mul(self, other: Frequency) -> Self::Output {
         self.0 * other.0
     }
@@ -62,6 +65,7 @@ impl Mul<Frequency> for Duration {
 impl Mul<Duration> for Frequency {
     type Output = f32;
 
+    #[inline(always)]
     fn mul(self, other: Duration) -> Self::Output {
         self.0 * other.0
     }
@@ -72,6 +76,7 @@ macro_rules! impl_additive {
         impl Add<$type> for $type {
             type Output = $type;
 
+            #[inline(always)]
             fn add(self, other: $type) -> $type {
                 $type(self.0 + other.0)
             }
@@ -80,6 +85,7 @@ macro_rules! impl_additive {
         impl Sub<$type> for $type {
             type Output = $type;
 
+            #[inline(always)]
             fn sub(self, other: $type) -> $type {
                 $type(self.0 - other.0)
             }
@@ -88,6 +94,7 @@ macro_rules! impl_additive {
         impl Neg for $type {
             type Output = $type;
 
+            #[inline(always)]
             fn neg(self) -> $type {
                 $type(self.0.neg())
             }
@@ -100,6 +107,7 @@ macro_rules! impl_scalar_mult {
         impl Mul<f32> for $type {
             type Output = $type;
 
+            #[inline(always)]
             fn mul(self, other: f32) -> $type {
                 $type(self.0 * other)
             }
@@ -108,6 +116,7 @@ macro_rules! impl_scalar_mult {
         impl Mul<$type> for f32 {
             type Output = $type;
 
+            #[inline(always)]
             fn mul(self, other: $type) -> $type {
                 $type(self * other.0)
             }
@@ -116,6 +125,7 @@ macro_rules! impl_scalar_mult {
         impl Div<f32> for $type {
             type Output = $type;
 
+            #[inline(always)]
             fn div(self, other: f32) -> $type {
                 $type(self.0 / other)
             }
@@ -124,6 +134,7 @@ macro_rules! impl_scalar_mult {
         impl Div<$type> for $type {
             type Output = f32;
 
+            #[inline(always)]
             fn div(self, other: $type) -> f32 {
                 self.0 / other.0
             }

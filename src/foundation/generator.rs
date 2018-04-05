@@ -38,6 +38,7 @@ pub trait SignalGenerator: SoundModule {
 impl SignalGenerator for f32 {
     type Output = f32;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         *self
     }
@@ -46,6 +47,7 @@ impl SignalGenerator for f32 {
 impl<T: Copy> SignalGenerator for Const<T> {
     type Output = T;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         self.0
     }
@@ -63,6 +65,7 @@ impl<'a, Signal> SignalGenerator for &'a mut Signal where
 {
     type Output = Signal::Output;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         (*self).next()
     }
@@ -85,6 +88,7 @@ impl<S1: SignalGenerator, S2: SignalGenerator> SignalGenerator for Add<S1, S2> w
 {
     type Output = <S1::Output as std::ops::Add<S2::Output>>::Output;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         self.0.next() + self.1.next()
     }
@@ -108,6 +112,7 @@ impl<S1: SignalGenerator, S2: SignalGenerator> SignalGenerator for Mul<S1, S2> w
 {
     type Output = <S1::Output as std::ops::Mul<S2::Output>>::Output;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         self.0.next() * self.1.next()
     }

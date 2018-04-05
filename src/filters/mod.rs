@@ -44,6 +44,13 @@ pub trait FilteredExt: SignalGenerator {
     {
         self.filtered(Frobnicator::new(knob))
     }
+
+
+    fn limit_with_lookahead(self, lookahead_count: usize) -> Filtered<Self, LookaheadLimiter> where
+        Self: SignalGenerator<Output = f32> + Sized
+    {
+        self.filtered(LookaheadLimiter::new(lookahead_count))
+    }
 }
 
 /// A filtered signal generator.
@@ -73,6 +80,7 @@ impl<S, F> SignalGenerator for Filtered<S, F> where
 {
     type Output = F::Output;
 
+    #[inline(always)]
     fn next(&mut self) -> Self::Output {
         self.filter.filter(self.generator.next())
     }
